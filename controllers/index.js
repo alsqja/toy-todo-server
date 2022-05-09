@@ -61,5 +61,52 @@ module.exports = {
         }
       });
     },
+    put: (req, res) => {
+      const todo_id = req.params.todo_id;
+      const user_id = req.params.user_id;
+      const { contents, expiration_date, is_done } = req.body;
+      const data = { contents, expiration_date, is_done };
+      models.todo.put(todo_id, user_id, data, (err, result) => {
+        if (err) {
+          console.log(err);
+          res.status(401).send("Ua");
+        } else {
+          res.status(200).json(result);
+        }
+      });
+    },
+    delete: (req, res) => {
+      const todo_id = req.params.todo_id;
+      const user_id = req.params.user_id;
+      models.todo.delete(todo_id, user_id, (err, result) => {
+        if (err) {
+          res.status(401).send("Ua");
+        } else {
+          res.status(204).send("No Content");
+        }
+      });
+    },
+  },
+  user: {
+    getData: (req, res) => {
+      const user_id = req.params.user_id;
+      models.user.getData(user_id, (err, result) => {
+        if (err) {
+          res.status(401).send("Unauthorized");
+        } else {
+          res.status(200).json(result);
+        }
+      });
+    },
+    get: (req, res) => {
+      const user_id = req.params.user_id;
+      models.user.get(user_id, (err, result) => {
+        if (err) {
+          res.status(401).send("Unauthorized");
+        } else {
+          res.status(200).json(result);
+        }
+      });
+    },
   },
 };
