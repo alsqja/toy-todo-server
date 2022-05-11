@@ -108,5 +108,26 @@ module.exports = {
         }
       });
     },
+    put: (req, res) => {
+      const user_id = req.params.user_id;
+      const { name, old_password, password } = req.body;
+      models.user.put(user_id, name, old_password, password, (err, result) => {
+        if (err) {
+          res.status(401).json(err);
+        } else {
+          res.status(200).json(result);
+        }
+      });
+    },
+    delete: (req, res) => {
+      const user_id = req.params.user_id;
+      models.user.delete(user_id, (err, result) => {
+        if (err) {
+          res.status(401).json(err);
+        } else {
+          res.status(204).send("No Content");
+        }
+      });
+    },
   },
 };

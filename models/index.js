@@ -70,7 +70,7 @@ module.exports = {
           result = result.filter(
             (todo) => +todo.expiration_date >= new Date(todayMaker()).getTime()
           );
-          callback(err, result.slice(data.page * 15, data.page * 15 + 15));
+          callback(err, result.slice(0, data.page * 15 + 15));
         });
       } else if (filter === "today") {
         const queryString = `SELECT * FROM todos WHERE user_id='${
@@ -171,6 +171,32 @@ module.exports = {
         const result = { ...res[0] };
         delete result.password;
         callback(err, result);
+      });
+    },
+    put: (user_id, name, old_password, password, callback) => {
+      const checkQuery = `SELECT * FROM users WHERE id='${user_id}' AND password='${old_password}'`;
+      db.query(checkQuery, (err, res) => {
+        if (res.length === 0) {
+          callback("잘못된 비밀번호 입니다.", res);
+        } else {
+          const queryString = `UPDATE users SET name='${name}', password='${password}' WHERE id='${user_id}'`;
+          db.query(queryString, (err, res) => {
+            callback(err, res);
+          });
+        }
+      });
+    },
+    delete: (user_id, callback) => {
+      const queryString = `DELETE FROM todos WHERE user_id='${user_id}'`;
+      db.query(queryString, (err, res) => {
+        if (err) {
+          callback(err, res);
+        } else {
+          const queryString = `DELETE FROM users WHERE id='${user_id}'`;
+          db.query(queryString, (err, res) => {
+            callback(err, res);
+          });
+        }
       });
     },
   },
