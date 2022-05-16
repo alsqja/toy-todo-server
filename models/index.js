@@ -70,7 +70,7 @@ module.exports = {
           result = result.filter(
             (todo) => +todo.expiration_date >= new Date(todayMaker()).getTime()
           );
-          callback(err, result.slice(0, data.page * 15 + 15));
+          callback(err, result.slice(data.page * 15, data.page * 15 + 15));
         });
       } else if (filter === "today") {
         const queryString = `SELECT * FROM todos WHERE user_id='${
@@ -111,7 +111,12 @@ module.exports = {
           data.is_done ? 1 : 0
         }' WHERE id=${todo_id}`;
         db.query(queryString, (err, result) => {
-          callback(err, result);
+          if (result) {
+            const queryString = `SELECT * FROM todos WHERE id='${todo_id}'`;
+            db.query(queryString, (err, result) => {
+              callback(err, result[0]);
+            });
+          }
         });
       } else {
         const queryString = `UPDATE todos SET contents='${data.contents}', expiration_date='${data.expiration_date}', is_done='${data.is_done}' WHERE id=${todo_id}`;
