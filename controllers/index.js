@@ -42,7 +42,7 @@ module.exports = {
         expiration_date,
         (err, result) => {
           if (err) {
-            res.status(403).send("Conflict");
+            res.status(403).json(err);
           } else {
             res.status(201).json(result);
           }
